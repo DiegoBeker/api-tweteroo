@@ -10,11 +10,10 @@ app.use(express.json());
 
 app.post("/sign-up", (req, res) => {
     const { username, avatar } = req.body;
-    if (!username || !avatar) {
-        return res.status(422).send("Preencha todos os campos");
+    if (!username || !avatar || typeof username !== "string"|| typeof avatar !== "string") {
+        return res.status(400).send("Todos os campos são obrigatórios!");
     }
     usuarios.push({ username: username, avatar: avatar });
-    //console.log(usuarios);
     res.status(201).send("OK");
 });
 
@@ -24,8 +23,11 @@ app.post("/tweets", (req, res) => {
     if (!usuario) {
         return res.status(401).send("UNAUTHORIZED");
     }
+    if (!username || !tweet || typeof username !== "string"|| typeof tweet !== "string") {
+        return res.status(400).send("Todos os campos são obrigatórios!");
+    }
     tweets.push({ username: username, tweet: tweet });
-    res.send("OK");
+    res.status(201).send("OK");
 });
 
 app.get("/tweets", (req, res) => {
