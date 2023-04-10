@@ -33,9 +33,14 @@ app.post("/tweets", (req, res) => {
 app.get("/tweets", (req, res) => {
     const tweetsList = [];
     let latestTweets;
+    const page = req.query.page;
+
+    if(page < 1){
+        res.status(400).send("Informe uma página válida!");
+    }
 
     if (tweets.length > 10) {
-        latestTweets = tweets.slice(-10);
+        latestTweets = tweets.slice(-10 * page, tweets.length - (10 * (page -1)));
     } else {
         latestTweets = [...tweets];
     }
