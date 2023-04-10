@@ -20,7 +20,7 @@ app.post("/sign-up", (req, res) => {
 app.post("/tweets", (req, res) => {
     const user = req.headers.user;
     const { tweet } = req.body;
-    console.log(user);
+
     const usuario = usuarios.find(u => u.username === user);
     if (!usuario) {
         return res.status(401).send("UNAUTHORIZED");
@@ -41,10 +41,14 @@ app.get("/tweets", (req, res) => {
         res.status(400).send("Informe uma página válida!");
     }
 
-    if (tweets.length > 10) {
+    if (tweets.length > 10 && page) {
         latestTweets = tweets.slice(-10 * page, tweets.length - (10 * (page - 1)));
     } else {
-        latestTweets = [...tweets];
+        if (!page) {
+            latestTweets = tweets.slice(-10);
+        } else {
+            latestTweets = [...tweets];
+        }
     }
 
     latestTweets.forEach((tweet) => {
