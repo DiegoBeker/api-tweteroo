@@ -18,15 +18,17 @@ app.post("/sign-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-    const { username, tweet } = req.body;
-    const usuario = usuarios.find(user => user.username === username);
+    const user = req.headers.user;
+    const { tweet } = req.body;
+    console.log(user);
+    const usuario = usuarios.find(u => u.username === user);
     if (!usuario) {
         return res.status(401).send("UNAUTHORIZED");
     }
-    if (!username || !tweet || typeof username !== "string" || typeof tweet !== "string") {
+    if (!user || !tweet || typeof user !== "string" || typeof tweet !== "string") {
         return res.status(400).send("Todos os campos são obrigatórios!");
     }
-    tweets.push({ username: username, tweet: tweet });
+    tweets.push({ username: user, tweet: tweet });
     res.status(201).send("OK");
 });
 
@@ -35,12 +37,12 @@ app.get("/tweets", (req, res) => {
     let latestTweets;
     const page = req.query.page;
 
-    if(page < 1){
+    if (page < 1) {
         res.status(400).send("Informe uma página válida!");
     }
 
     if (tweets.length > 10) {
-        latestTweets = tweets.slice(-10 * page, tweets.length - (10 * (page -1)));
+        latestTweets = tweets.slice(-10 * page, tweets.length - (10 * (page - 1)));
     } else {
         latestTweets = [...tweets];
     }
@@ -53,10 +55,10 @@ app.get("/tweets", (req, res) => {
 });
 
 app.get("/tweets/:username", (req, res) => {
-    const {username} = req.params;
+    const { username } = req.params;
     const tweetsList = [];
-    const userTweets = tweets.filter((t)=> t.username === username);
-    if(userTweets.length > 0){
+    const userTweets = tweets.filter((t) => t.username === username);
+    if (userTweets.length > 0) {
         const usuario = usuarios.find(usuario => usuario.username === username);
         userTweets.forEach((tweet) => {
             tweetsList.push({ username: tweet.username, avatar: usuario.avatar, tweet: tweet.tweet });
